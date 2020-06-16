@@ -134,15 +134,15 @@ def load(data_set_name, **kwargs):
         info: data set info object
     """
     # get data and its info
-    ds, info = tfds.load(name=data_set_name, split=tfds.Split.ALL, with_info=True)
+    ds, info = tfds.load(name=data_set_name, with_info=True)
 
     # configure the data sets
     if 'train' in info.splits:
-        train_ds = configure_data_set(ds=ds, info=info, is_training=True, **kwargs)
+        train_ds = configure_data_set(ds=ds['train'], info=info, is_training=True, **kwargs)
     else:
         train_ds = None
     if 'test' in info.splits:
-        test_ds = configure_data_set(ds=ds, info=info, is_training=False, **kwargs)
+        test_ds = configure_data_set(ds=ds['test'], info=info, is_training=False, **kwargs)
     else:
         test_ds = None
 

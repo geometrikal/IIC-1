@@ -378,7 +378,7 @@ if __name__ == '__main__':
     DS_CONFIG = {
         # mnist data set parameters
         'mnist': {
-            'batch_size': 700,
+            'batch_size': 200,
             'num_repeats': 5,
             'mdl_input_dims': [24, 24, 1]}
     }
