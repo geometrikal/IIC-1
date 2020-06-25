@@ -4,8 +4,6 @@ import numpy as np
 from numpy.lib.format import open_memmap
 import tensorflow as tf
 
-from mml.data.image_utils import load_image
-from mml.data.utils import parse_directory
 
 
 class DatasetBase:
@@ -59,23 +57,23 @@ class DatasetBase:
             return hashlib.sha256(repr(self.hash_data).encode('UTF-8')).hexdigest()[0:16]
 
 
-if __name__ == '__main__':
-    import matplotlib.pyplot as plt
-
-    # Test parsing
-    _filenames = parse_directory(r"D:\Datasets\Seagrass\SeagrassFrames")
-
-    # Test resizing
-    _im = load_image(r"../../test/example.jpg")
-    plt.imshow(_im)
-    plt.title(_im.shape)
-    plt.show()
-    _im = load_image(r"../../test/example.jpg", (600, 512), 'rgb')
-    plt.imshow(_im)
-    plt.show()
-    _im = load_image(r"../../test/example.jpg", (300, 512), 'rgb')
-    plt.imshow(_im)
-    plt.show()
+# if __name__ == '__main__':
+#     import matplotlib.pyplot as plt
+#
+#     # Test parsing
+#     _filenames = parse_directory(r"D:\Datasets\Seagrass\SeagrassFrames")
+#
+#     # Test resizing
+#     _im = load_image(r"../../test/example.jpg")
+#     plt.imshow(_im)
+#     plt.title(_im.shape)
+#     plt.show()
+#     _im = load_image(r"../../test/example.jpg", (600, 512), 'rgb')
+#     plt.imshow(_im)
+#     plt.show()
+#     _im = load_image(r"../../test/example.jpg", (300, 512), 'rgb')
+#     plt.imshow(_im)
+#     plt.show()
 
     # Test loading
     # _gen = ImageLoader(_filenames)

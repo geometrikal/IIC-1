@@ -1,8 +1,8 @@
 import numpy as np
 import skimage.io as skio
 import skimage.transform as skt
-from mml.data.dataset import DatasetBase
-from mml.data.image_loader import ParallelImageLoader
+from dataset import DatasetBase
+from image_loader import ParallelImageLoader
 
 
 def rescale(im, factor):
@@ -19,10 +19,11 @@ class ImageDataset(DatasetBase):
                  cls,
                  rescale=None,
                  img_size=None,
+                 subsample=1,
                  memmap_directory=None,
                  overwrite_memmap=False):
-        self.filenames = filenames
-        self.cls = cls
+        self.filenames = filenames[::subsample]
+        self.cls = cls[::subsample]
         self.rescale = rescale
         self.dtype = np.uint8
 

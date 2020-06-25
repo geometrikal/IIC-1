@@ -1,6 +1,11 @@
 import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
+from parser import *
+
+from filenames_dataset import FilenamesDataset
+from image_dataset import ImageDataset
+from tf_generator import TFGenerator
 
 
 def mnist_x(x_orig, mdl_input_dims, is_training):
@@ -116,11 +121,11 @@ def configure_data_set(ds, info, batch_size, is_training, **kwargs):
     ds = ds.batch(batch_size)
 
     # pre-process the data set
-    with tf.device('/cpu:0'):
-        ds = pre_process_data(ds, info, is_training, **kwargs)
-
-    # enable prefetch
-    ds = ds.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
+    # with tf.device('/cpu:0'):
+    #     ds = pre_process_data(ds, info, is_training, **kwargs)
+    #
+    # # enable prefetch
+    # ds = ds.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
 
     return ds
 
@@ -145,5 +150,11 @@ def load(data_set_name, **kwargs):
         test_ds = configure_data_set(ds=ds['test'], info=info, is_training=False, **kwargs)
     else:
         test_ds = None
-
     return train_ds, test_ds, info
+
+
+if __name__ == "__main__":
+    train_ds, test_ds, info = load('mnist', batch_size=32, mdl_input_dims=[28,28,1], num_repeats=5)
+
+
+

@@ -8,6 +8,7 @@ from matplotlib.ticker import FormatStrFormatter
 
 # import data loader
 from data import load
+from data_other import load_from_directory
 
 # import computational graphs
 from graphs import IICGraph, VGG, KERNEL_INIT, BIAS_INIT
@@ -104,7 +105,6 @@ class ClusterIIC(object):
         # loop over the number of sub-heads
         loss = tf.constant(0, dtype=tf.float32)
         for i in range(num_sub_heads):
-
             # run the model
             pi_x = self.__head_out(z_x, k, name=head + str(i + 1))
             num_vars = len(tf.compat.v1.global_variables())
@@ -315,6 +315,7 @@ class ClusterIIC(object):
                 # loop over the batches
                 loss_A = []
                 loss_B = []
+                idx = 0
                 while True:
                     try:
 
@@ -331,11 +332,12 @@ class ClusterIIC(object):
                             return
 
                         # print update
-                        print('\rEpoch {:d}, Loss = {:.4f}'.format(epoch, losses[i_train]), end='')
+                        print('\rEpoch {:d}, {}, Loss = {:.4f}'.format(epoch, idx, losses[i_train]), end='')
 
                     # iterator will throw this error when its out of data
                     except tf.errors.OutOfRangeError:
                         break
+                    idx += 1
 
                 # new line
                 print('')
@@ -371,36 +373,80 @@ class ClusterIIC(object):
 
 
 if __name__ == '__main__':
-    # pick a data set
-    DATA_SET = 'mnist'
 
-    # define splits
-    DS_CONFIG = {
-        # mnist data set parameters
-        'mnist': {
-            'batch_size': 200,
-            'num_repeats': 5,
-            'mdl_input_dims': [24, 24, 1]}
-    }
+    mode = 'any'
 
-    # load the data set
-    TRAIN_SET, TEST_SET, SET_INFO = load(data_set_name=DATA_SET, **DS_CONFIG[DATA_SET])
+    if mode == 'mnist':
+        # pick a data set
+        DATA_SET = 'mnist'
 
-    # configure the common model elements
-    MDL_CONFIG = {
-        # mist hyper-parameters
-        'mnist': {
-            'num_classes': SET_INFO.features['label'].num_classes,
-            'learning_rate': 1e-4,
-            'num_repeats': DS_CONFIG[DATA_SET]['num_repeats'],
-            'save_dir': None},
-    }
+        # define splits
+        DS_CONFIG = {
+            # mnist data set parameters
+            'mnist': {
+                'batch_size': 200,
+                'num_repeats': 5,
+                'mdl_input_dims': [24, 24, 1]}
+        }
 
-    # declare the model
-    mdl = ClusterIIC(**MDL_CONFIG[DATA_SET])
+        # load the data set
+        TRAIN_SET, TEST_SET, SET_INFO = load(data_set_name=DATA_SET, **DS_CONFIG[DATA_SET])
 
-    # train the model
-    mdl.train(IICGraph(config='B', batch_norm=True, fan_out_init=64), TRAIN_SET, TEST_SET, num_epochs=600)
+        # configure the common model elements
+        MDL_CONFIG = {
+            # mist hyper-parameters
+            'mnist': {
+                'num_classes': SET_INFO.features['label'].num_classes,
+                'learning_rate': 1e-4,
+                'num_repeats': DS_CONFIG[DATA_SET]['num_repeats'],
+                'save_dir': None},
+        }
 
-    print('All done!')
-    plt.show()
+        # declare the model
+        mdl = ClusterIIC(**MDL_CONFIG[DATA_SET])
+
+        # train the model
+        mdl.train(IICGraph(config='B', batch_norm=True, fan_out_init=64), TRAIN_SET, TEST_SET, num_epochs=10)
+
+        print('All done!')
+        plt.show()
+
+    else:
+        # # pick a data set
+        # DATA_SET = 'mnist'
+        #
+        # # define splits
+        # DS_CONFIG = {
+        #     # mnist data set parameters
+        #     'mnist': {
+        #         'batch_size': 200,
+        #         'num_repeats': 5,
+        #         'mdl_input_dims': [24, 24, 1]}
+        # }
+
+        # load the data set
+        TRAIN_SET, TEST_SET, NUM_CLASSES = load_from_directory("/media/mar76c/DATA/Data/Seagrass/SeagrassFramesPatches",
+                                                               split=0.2,
+                                                               batch_size=16,
+                                                               num_repeats=5,
+                                                               subsample=10,
+                                                               memmap_directory="/home/mar76c/Documents/tmp")
+
+        # configure the common model elements
+        # MDL_CONFIG = {
+        #     # mist hyper-parameters
+        #     'mnist': {
+        #         'num_classes': SET_INFO.features['label'].num_classes,
+        #         'learning_rate': 1e-4,
+        #         'num_repeats': DS_CONFIG[DATA_SET]['num_repeats'],
+        #         'save_dir': None},
+        # }
+
+        # declare the model
+        mdl = ClusterIIC(NUM_CLASSES, 1e-4, 5)
+
+        # train the model
+        mdl.train(IICGraph(config='B', batch_norm=True, fan_out_init=64), TRAIN_SET, TEST_SET, num_epochs=10)
+
+        print('All done!')
+        plt.show()
