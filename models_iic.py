@@ -406,47 +406,25 @@ if __name__ == '__main__':
         mdl = ClusterIIC(**MDL_CONFIG[DATA_SET])
 
         # train the model
-        mdl.train(IICGraph(config='B', batch_norm=True, fan_out_init=64), TRAIN_SET, TEST_SET, num_epochs=10)
+        mdl.train(IICGraph(config='B', batch_norm=True, fan_out_init=64), TRAIN_SET, TEST_SET, num_epochs=300)
 
         print('All done!')
         plt.show()
 
     else:
-        # # pick a data set
-        # DATA_SET = 'mnist'
-        #
-        # # define splits
-        # DS_CONFIG = {
-        #     # mnist data set parameters
-        #     'mnist': {
-        #         'batch_size': 200,
-        #         'num_repeats': 5,
-        #         'mdl_input_dims': [24, 24, 1]}
-        # }
-
         # load the data set
         TRAIN_SET, TEST_SET, NUM_CLASSES = load_from_directory("/media/mar76c/DATA/Data/Seagrass/SeagrassFramesPatches",
                                                                split=0.2,
-                                                               batch_size=16,
+                                                               batch_size=8,
                                                                num_repeats=5,
                                                                subsample=10,
                                                                memmap_directory="/home/mar76c/Documents/tmp")
-
-        # configure the common model elements
-        # MDL_CONFIG = {
-        #     # mist hyper-parameters
-        #     'mnist': {
-        #         'num_classes': SET_INFO.features['label'].num_classes,
-        #         'learning_rate': 1e-4,
-        #         'num_repeats': DS_CONFIG[DATA_SET]['num_repeats'],
-        #         'save_dir': None},
-        # }
 
         # declare the model
         mdl = ClusterIIC(NUM_CLASSES, 1e-4, 5)
 
         # train the model
-        mdl.train(IICGraph(config='B', batch_norm=True, fan_out_init=64), TRAIN_SET, TEST_SET, num_epochs=10)
+        mdl.train(IICGraph(config='B', batch_norm=True, fan_out_init=64), TRAIN_SET, TEST_SET, num_epochs=100)
 
         print('All done!')
         plt.show()
